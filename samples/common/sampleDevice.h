@@ -513,7 +513,12 @@ private:
 
 inline void setCudaDevice(int device, std::ostream& os)
 {
-    cudaCheck(cudaSetDevice(device));
+    auto ret = cudaSetDevice(device);
+    if (ret != cudaSuccess)
+    {
+        std::cerr << "Cuda failure: " << cudaGetErrorString(ret) << std::endl;
+        return false;
+    }
 
     cudaDeviceProp properties;
     cudaCheck(cudaGetDeviceProperties(&properties, device));
@@ -533,6 +538,7 @@ inline void setCudaDevice(int device, std::ostream& os)
     os << "Note: The application clock rates do not reflect the actual clock rates that the GPU is "
                                                                          << "currently running at." << std::endl;
     // clang-format on
+    return true;
 }
 
 inline int32_t getCudaDriverVersion()
