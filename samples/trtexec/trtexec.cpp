@@ -342,7 +342,10 @@ int main(int argc, char** argv)
             sample::setReportableSeverity(ILogger::Severity::kVERBOSE);
         }
 
-        setCudaDevice(options.system.device, sample::gLogInfo);
+        if (!setCudaDevice(options.system.device, sample::gLogInfo)) {
+            sample::gLogError << "setCudaDevice failed." << std::endl;
+            return sample::gLogger.reportFail(sampleTest);
+        }
         sample::gLogInfo << std::endl;
         sample::gLogInfo << "TensorRT version: " << NV_TENSORRT_MAJOR << "." << NV_TENSORRT_MINOR << "."
                          << NV_TENSORRT_PATCH << std::endl;
